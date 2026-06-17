@@ -199,16 +199,10 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // ── Password toggle ──
-    const passToggle = document.querySelector('.toggle-password');
-    const passInput  = document.querySelector('.pass-input');
-    if (passToggle && passInput) {
-        passToggle.addEventListener('click', function () {
-            const isPassword = passInput.getAttribute('type') === 'password';
-            passInput.setAttribute('type', isPassword ? 'text' : 'password');
-            this.classList.toggle('fa-eye',       !isPassword);
-            this.classList.toggle('fa-eye-slash',  isPassword);
-        });
-    }
+    // Handled globally by the theme script (assets/backend/js/script.js),
+    // which binds a delegated click handler on `.toggle-password` and flips
+    // `.pass-input` between password/text. Binding it again here caused the
+    // click to fire twice and cancel itself out (password → text → password).
 
     // ── Switch account ──
     const useDifferentBtn = document.getElementById('use-different-btn');

@@ -484,7 +484,7 @@
 {{-- Recruitment Module Routes Ends --}}
 
 {{-- Onboarding Module Routes Starts --}}
-@if (isModuleEnabled('Onboarding'))
+@if (isModuleEnabled('Onboarding') && (auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->hasRole('new-hire') || auth()->user()->can('Manage Onboarding')))
 <li class="submenu {{ str_starts_with($activeLink, 'onboarding-') || $activeLink == 'probation-reviews' ? 'active' : '' }}">
     <a href="#" class="{{ str_starts_with($activeLink, 'onboarding-') || $activeLink == 'probation-reviews' ? 'active' : '' }}">
         <i class="fas fa-user-check"></i>
@@ -514,7 +514,7 @@
 {{-- Onboarding Module Routes Ends --}}
 
 {{-- Resignation Module Routes Starts --}}
-@if (isModuleEnabled('Resignation'))
+@if (isModuleEnabled('Resignation') && (!auth()->user()->hasRole(['admin', 'Admin', 'Super Admin', 'superadmin']) || auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->can('Manage Resignation')))
 <li class="submenu {{ str_starts_with($activeLink, 'resignation.') ? 'active' : '' }}">
     <a href="#" class="{{ str_starts_with($activeLink, 'resignation.') ? 'active' : '' }}">
         <i class="fas fa-sign-out-alt"></i>
@@ -522,14 +522,14 @@
         <span class="menu-arrow"></span>
     </a>
     <ul style="{{ str_starts_with($activeLink, 'resignation.') ? 'display: block;' : '' }}">
-        @if(auth()->user()->hasRole(['admin', 'Admin', 'hr', 'HR', 'CEO', 'Super Admin', 'superadmin']))
+        @if(auth()->user()->hasRole(['hr', 'HR', 'CEO', 'Super Admin', 'superadmin']) || auth()->user()->can('Manage Resignation'))
         <li>
             <a class="@if ($activeLink == 'resignation.admin') active @endif"
                 href="{{ route('resignation.admin') }}">{{ __trans('Admin Control') }}</a>
         </li>
         @endif
 
-        @if(auth()->user()->hasRole(['admin', 'Admin', 'hr', 'HR', 'Manager', 'manager', 'CEO', 'Director', 'Super Admin', 'superadmin']))
+        @if(auth()->user()->hasRole(['hr', 'HR', 'Manager', 'manager', 'CEO', 'Director', 'Super Admin', 'superadmin']) || auth()->user()->can('Manage Resignation'))
         <li>
             <a class="@if ($activeLink == 'resignation.manager') active @endif"
                 href="{{ route('resignation.manager') }}">{{ __trans('Manage Resignations') }}</a>
@@ -558,12 +558,17 @@
     </a>
     <ul style="{{ str_starts_with($activeLink, 'indian-payroll') ? 'display: block;' : '' }}">
         <li><a class="@if ($activeLink == 'indian-payroll') active @endif" href="{{ route('backend.indian-payroll.dashboard') }}">{{ __trans('dashboard') }}</a></li>
-        <li><a class="@if ($activeLink == 'indian-payroll.employee-profiles') active @endif" href="{{ route('backend.indian-payroll.employee-profiles.index') }}">{{ __trans('employee_statutory_profiles') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.employee-profiles') active @endif" href="{{ route('backend.indian-payroll.employee-profiles.index') }}">{{ __trans('employee_profiles') }}</a></li>
         <li><a class="@if ($activeLink == 'indian-payroll.salary-components') active @endif" href="{{ route('backend.indian-payroll.salary-components.index') }}">{{ __trans('salary_components') }}</a></li>
         <li><a class="@if ($activeLink == 'indian-payroll.salary-templates') active @endif" href="{{ route('backend.indian-payroll.salary-templates.index') }}">{{ __trans('ctc_structure_templates') }}</a></li>
-        <li><a class="@if ($activeLink == 'indian-payroll.employee-salary-structures') active @endif" href="{{ route('backend.indian-payroll.employee-salary-structures.index') }}">{{ __trans('employee_salary_structures') }}</a></li>
-        <li><a class="@if ($activeLink == 'indian-payroll.statutory-settings') active @endif" href="{{ route('backend.indian-payroll.statutory-settings.index') }}">{{ __trans('statutory_settings') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.employee-salary-structures') active @endif" href="{{ route('backend.indian-payroll.employee-salary-structures.index') }}">{{ __trans('salary_structures') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.statutory-settings') active @endif" href="{{ route('backend.indian-payroll.statutory-settings.index') }}">{{ __trans('compliance_settings') }}</a></li>
         <li><a class="@if ($activeLink == 'indian-payroll.payroll-runs') active @endif" href="{{ route('backend.indian-payroll.payroll-runs.index') }}">{{ __trans('payroll_runs') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.loans') active @endif" href="{{ route('backend.indian-payroll.loans.index') }}">{{ __trans('loans_and_advances') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.reimbursements') active @endif" href="{{ route('backend.indian-payroll.reimbursements.index') }}">{{ __trans('reimbursements') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.overtime') active @endif" href="{{ route('backend.indian-payroll.overtime.index') }}">{{ __trans('overtime_and_comp_off') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.leave-encashment') active @endif" href="{{ route('backend.indian-payroll.leave-encashment.index') }}">{{ __trans('leave_encashment') }}</a></li>
+        <li><a class="@if ($activeLink == 'indian-payroll.statutory-bonus') active @endif" href="{{ route('backend.indian-payroll.statutory-bonus.index') }}">{{ __trans('statutory_bonus') }}</a></li>
         <li><a class="@if ($activeLink == 'indian-payroll.tax-declarations') active @endif" href="{{ route('backend.indian-payroll.tax-declarations.index') }}">{{ __trans('tax_declarations') }}</a></li>
         <li><a class="@if ($activeLink == 'indian-payroll.settlements') active @endif" href="{{ route('backend.indian-payroll.settlements.index') }}">{{ __trans('full_and_final_settlements') }}</a></li>
     </ul>

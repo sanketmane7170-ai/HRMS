@@ -61,6 +61,15 @@ class PermissionSeeder extends Seeder
             ['name' => 'Teams User'],
             ['name' => 'Hierarchy User'],
             ['name' => 'Hierarchy1 User'],
+            // Permissions the sidebar already checks via @can but that were
+            // never seeded, so they couldn't be assigned to any role.
+            ['name' => 'Manage Company Document'],
+            ['name' => 'Manage Training'],
+            ['name' => 'Manage Performance Review'],
+            ['name' => 'Manage Task'],
+            ['name' => 'Manage International Payroll'],
+            ['name' => 'Manage Company Policy'],
+            ['name' => 'Manage Resignation'],
         ];
 
         foreach ($arrPermissions as $data) {

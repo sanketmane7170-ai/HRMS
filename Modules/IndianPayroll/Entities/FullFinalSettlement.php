@@ -12,7 +12,7 @@ class FullFinalSettlement extends Model
     protected $fillable = [
         'user_id', 'last_working_day', 'pending_salary_amount', 'gratuity_amount',
         'gratuity_taxable_amount', 'leave_encashment_amount', 'leave_encashment_taxable_amount',
-        'notice_pay_recovery', 'other_deductions', 'final_tds', 'net_payable',
+        'notice_pay_recovery', 'asset_recovery', 'loan_recovery', 'other_deductions', 'final_tds', 'net_payable',
         'status', 'approved_by', 'approved_at',
     ];
 
@@ -25,6 +25,8 @@ class FullFinalSettlement extends Model
         'leave_encashment_amount' => 'decimal:2',
         'leave_encashment_taxable_amount' => 'decimal:2',
         'notice_pay_recovery' => 'decimal:2',
+        'asset_recovery' => 'decimal:2',
+        'loan_recovery' => 'decimal:2',
         'other_deductions' => 'decimal:2',
         'final_tds' => 'decimal:2',
         'net_payable' => 'decimal:2',

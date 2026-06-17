@@ -44,11 +44,18 @@
                             <button type="submit" class="btn btn-dark">{{ __trans('lock_run') }}</button>
                         </form>
                     @endif
-                    @if(in_array($run->status, ['computed', 'approved']))
+                    @if(in_array($run->status, ['computed', 'approved', 'locked']))
                         <a href="{{ route('backend.indian-payroll.reports.pf', $run) }}" class="btn btn-outline-secondary">{{ __trans('pf_register') }}</a>
                         <a href="{{ route('backend.indian-payroll.reports.esi', $run) }}" class="btn btn-outline-secondary">{{ __trans('esi_register') }}</a>
                         <a href="{{ route('backend.indian-payroll.reports.pt', $run) }}" class="btn btn-outline-secondary">{{ __trans('pt_register') }}</a>
                         <a href="{{ route('backend.indian-payroll.reports.lwf', $run) }}" class="btn btn-outline-secondary">{{ __trans('lwf_register') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.salary-register', $run) }}" class="btn btn-outline-dark">{{ __trans('salary_register') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.payroll-summary', $run) }}" class="btn btn-outline-dark">{{ __trans('payroll_summary') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.department-cost', $run) }}" class="btn btn-outline-dark">{{ __trans('department_cost') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.salary-variance', $run) }}" class="btn btn-outline-dark">{{ __trans('salary_variance') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.journal-voucher', $run) }}" class="btn btn-outline-dark">{{ __trans('journal_voucher') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.pf-ecr', $run) }}" class="btn btn-outline-secondary">{{ __trans('pf_ecr_file') }}</a>
+                        <a href="{{ route('backend.indian-payroll.payroll-runs.bank-file', $run) }}" class="btn btn-outline-success">{{ __trans('bank_transfer_file') }}</a>
                     @endif
                 </div>
             </div>

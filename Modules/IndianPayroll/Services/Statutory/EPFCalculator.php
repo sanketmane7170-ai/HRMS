@@ -37,12 +37,22 @@ class EPFCalculator
         $employerTotal = $this->roundRupee($employerWage * ((float) $settings->employer_rate / 100));
         $employerEpfAmount = round($employerTotal - $employerEpsAmount, 2);
 
+        // Employer-borne statutory charges on the (capped) PF wage:
+        //  - A/c 2  EPF administrative charges
+        //  - A/c 21 EDLI (capped at the PF wage ceiling, never the voluntary-above amount)
+        // Neither is deducted from the employee.
+        $adminWage = min($actualPfWage, (float) $settings->wage_ceiling);
+        $adminCharges = $this->roundRupee($adminWage * ((float) $settings->admin_charges_rate / 100));
+        $edliCharges = $this->roundRupee($adminWage * ((float) ($settings->edli_charges_rate ?? 0) / 100));
+
         return new PfResult(
             pfWage: $employeePfWage,
             employeeAmount: $employeeAmount,
             employerEpfAmount: max(0.0, $employerEpfAmount),
             employerEpsAmount: $employerEpsAmount,
             applicable: true,
+            adminChargesAmount: $adminCharges,
+            edliChargesAmount: $edliCharges,
         );
     }
 

@@ -22,9 +22,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Overrider all permission for the user having role admin
+        // Only superadmin is full-access (god-mode) and bypasses every gate.
+        // The 'admin' role is intentionally NOT here anymore: admins are now
+        // permission-driven, so a superadmin can restrict an admin to only the
+        // modules assigned to their role via the Roles screen.
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('admin') || $user->hasRole('superadmin')) {
+            if ($user->hasRole(\App\Models\User::ROLE_SUPER_ADMIN)) {
                 return true;
             }
         });

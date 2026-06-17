@@ -43,8 +43,26 @@ class PayrollRunController extends Controller
                 ->with('error', 'A payroll run for this month already exists.');
         }
 
+        // Compute immediately so the run lands on the show page already populated,
+        // instead of an empty all-zeros state that looks broken and forces the
+        // user to manually click "Compute Run". The button stays available for
+        // re-computing after salary/attendance edits.
+        try {
+            $this->service->compute($run);
+            $run->update(['compute_error' => null]);
+        } catch (\Throwable $e) {
+            Log::error('PayrollRun auto-compute on create failed', ['run_id' => $run->id, 'error' => $e->getMessage()]);
+            $run->update([
+                'status' => PayrollRun::STATUS_FAILED,
+                'compute_error' => substr($e->getMessage(), 0, 500),
+            ]);
+
+            return redirect()->route('backend.indian-payroll.payroll-runs.show', $run)
+                ->with('error', 'Payroll run created, but compute failed: ' . $e->getMessage());
+        }
+
         return redirect()->route('backend.indian-payroll.payroll-runs.show', $run)
-            ->with('success', createFlashMessage('Payroll Run', 'created'));
+            ->with('success', 'Payroll run created and computed successfully.');
     }
 
     public function show(PayrollRun $run)

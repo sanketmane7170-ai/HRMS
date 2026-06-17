@@ -22,7 +22,6 @@
                     <a href="{{ route('backend.work-status.live-board') }}">
                         <i class="fas fa-satellite-dish pulse-icon"></i>
                         <span>Live Presence Board</span>
-                        <small class="badge badge-primary ml-2">LIVE</small>
                     </a>
                 </li>
                 
@@ -30,7 +29,7 @@
                 <li class="{{ $activeLink == 'agentic-ai' ? 'active':''}}">
                     <a href="/agenticai">
                         <i class="fas fa-microchip"></i>
-                        <span>WorkPilot AI <small class="badge badge-success ml-2">NEW</small></span>
+                        <span>WorkPilot AI</span>
                     </a>
                 </li>
 
@@ -115,7 +114,7 @@
 
                 @include('layouts.partials.backend.module-sidebar')
 
-                @if(auth()->user()->hasRole(\App\Models\User::ROLE_ADMIN) || auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN))
+                @if(auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->can('Manage International Payroll'))
                 <li class="submenu">
                     <a href="#">
                         <i class="fas fa-money-check-alt"></i>
@@ -194,8 +193,7 @@
                     </ul>
                 </li>
                 @endcan
-                @if (auth()->user()->hasRole(App\Models\User::ROLE_ADMIN))
-                    @if(hasPermission('General Settings') || hasPermission('Smtp Settings') || hasPermission('Advance Settings'))
+                @if (auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->can('Manage Company Policy'))
                     <li class="submenu">
                         <a href="#">
                             <i class="fas fa-shield-alt"></i>
@@ -211,12 +209,11 @@
                                 <a class="@if($activeLink =='User-Company-Policy') active @endif"
                                     href="{{route('backend.userCompanyPolicy')}}">{{__trans('user_company_policy')}}</a>
                             </li>
-                            
+
                         </ul>
                     </li>
-                    @endif
                 @endif
-                @if (!auth()->user()->hasRole(App\Models\User::ROLE_ADMIN))
+                @if (!auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) && !auth()->user()->can('Manage Company Policy'))
                 <li class="submenu">
                     <a href="#">
                         <i class="fas fa-shield-alt"></i>

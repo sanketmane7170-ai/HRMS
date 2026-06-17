@@ -15,6 +15,48 @@
 
         @if(session('success'))<div class="alert alert-success">{{ session('success') }}</div>@endif
 
+        {{-- Computed annual tax projection — the same figures the Form 16 PDF
+             shows, surfaced here so the page isn't empty when the employee has
+             made no investment/HRA declarations. --}}
+        @if($taxSummary)
+        <div class="card"><div class="card-body">
+            <h5>{{ __trans('tax_computation_summary') }} <span class="badge badge-primary">{{ ucfirst($taxSummary->regime) }} {{ __trans('regime') }}</span></h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-sm mb-0">
+                        <tr><td>{{ __trans('gross_taxable_income') }}</td><td class="text-end">{{ number_format($taxSummary->grossTaxableIncome, 2) }}</td></tr>
+                        <tr><td>{{ __trans('exemptions_and_deductions') }}</td><td class="text-end">{{ number_format($taxSummary->totalExemptionsAndDeductions, 2) }}</td></tr>
+                        <tr><td><strong>{{ __trans('net_taxable_income') }}</strong></td><td class="text-end"><strong>{{ number_format($taxSummary->netTaxableIncome, 2) }}</strong></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm mb-0">
+                        <tr><td>{{ __trans('tax_before_rebate') }}</td><td class="text-end">{{ number_format($taxSummary->taxBeforeRebate, 2) }}</td></tr>
+                        <tr><td>{{ __trans('rebate_87a') }}</td><td class="text-end">-{{ number_format($taxSummary->rebate87A, 2) }}</td></tr>
+                        <tr><td>{{ __trans('surcharge') }}</td><td class="text-end">{{ number_format($taxSummary->surcharge, 2) }}</td></tr>
+                        <tr><td>{{ __trans('health_and_education_cess') }}</td><td class="text-end">{{ number_format($taxSummary->cess, 2) }}</td></tr>
+                        <tr><td><strong>{{ __trans('total_tax_liability') }}</strong></td><td class="text-end"><strong>{{ number_format($taxSummary->annualTaxLiability, 2) }}</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+            @if($quarterlyTds)
+            <h6 class="mt-3">{{ __trans('quarterly_tds_deposited') }}</h6>
+            <table class="table table-sm table-bordered mb-0" style="max-width:640px;">
+                <thead><tr><th>Q1 (Apr-Jun)</th><th>Q2 (Jul-Sep)</th><th>Q3 (Oct-Dec)</th><th>Q4 (Jan-Mar)</th><th>{{ __trans('total') }}</th></tr></thead>
+                <tr>
+                    <td class="text-end">{{ number_format($quarterlyTds[1], 2) }}</td>
+                    <td class="text-end">{{ number_format($quarterlyTds[2], 2) }}</td>
+                    <td class="text-end">{{ number_format($quarterlyTds[3], 2) }}</td>
+                    <td class="text-end">{{ number_format($quarterlyTds[4], 2) }}</td>
+                    <td class="text-end"><strong>{{ number_format(array_sum($quarterlyTds), 2) }}</strong></td>
+                </tr>
+            </table>
+            @endif
+        </div></div>
+        @else
+        <div class="alert alert-warning">{{ __trans('tax_summary_unavailable_no_salary_structure') }}</div>
+        @endif
+
         @if($declaration->hraExemptionInput)
         <div class="card"><div class="card-body">
             <h5>{{ __trans('hra_details') }}</h5>

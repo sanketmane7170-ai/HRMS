@@ -25,6 +25,8 @@ class SalaryComponent extends Model
     public const CODE_EPF_EMPLOYEE = 'EPF_EMPLOYEE';
     public const CODE_EPF_EMPLOYER = 'EPF_EMPLOYER';
     public const CODE_EPS_EMPLOYER = 'EPS_EMPLOYER';
+    public const CODE_EPF_ADMIN_CHARGES = 'EPF_ADMIN_CHARGES';
+    public const CODE_EDLI_CHARGES = 'EDLI_CHARGES';
     public const CODE_ESI_EMPLOYEE = 'ESI_EMPLOYEE';
     public const CODE_ESI_EMPLOYER = 'ESI_EMPLOYER';
     public const CODE_PROFESSIONAL_TAX = 'PROFESSIONAL_TAX';
@@ -33,6 +35,10 @@ class SalaryComponent extends Model
     public const CODE_TDS = 'TDS';
     public const CODE_GRATUITY_PROVISION = 'GRATUITY_PROVISION';
     public const CODE_LOSS_OF_PAY = 'LOSS_OF_PAY';
+    public const CODE_LOAN_RECOVERY = 'LOAN_RECOVERY';
+    public const CODE_REIMBURSEMENT = 'REIMBURSEMENT';
+    public const CODE_OVERTIME = 'OVERTIME_ALLOWANCE';
+    public const CODE_LEAVE_ENCASHMENT = 'LEAVE_ENCASHMENT';
 
     // Additional CTC-structurable allowances and employer contributions.
     public const CODE_TELEPHONE_INTERNET_ALLOWANCE = 'TELEPHONE_INTERNET_ALLOWANCE';

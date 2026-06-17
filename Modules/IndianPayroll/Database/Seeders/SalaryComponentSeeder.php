@@ -32,6 +32,8 @@ class SalaryComponentSeeder extends Seeder
             ['code' => 'ESI_EMPLOYER', 'name' => 'ESI (Employer Share)', 'type' => 'employer_contribution', 'is_taxable' => false, 'is_statutory' => true, 'considered_for_pf_wage' => false, 'order' => 230],
             ['code' => 'LWF_EMPLOYER', 'name' => 'Labour Welfare Fund (Employer Share)', 'type' => 'employer_contribution', 'is_taxable' => false, 'is_statutory' => true, 'considered_for_pf_wage' => false, 'order' => 240],
             ['code' => 'GRATUITY_PROVISION', 'name' => 'Gratuity Provision', 'type' => 'employer_contribution', 'is_taxable' => false, 'is_statutory' => true, 'considered_for_pf_wage' => false, 'order' => 250],
+            ['code' => 'EPF_ADMIN_CHARGES', 'name' => 'EPF Administrative Charges (A/c 2)', 'type' => 'employer_contribution', 'is_taxable' => false, 'is_statutory' => true, 'considered_for_pf_wage' => false, 'order' => 225],
+            ['code' => 'EDLI_CHARGES', 'name' => 'EDLI Charges (A/c 21)', 'type' => 'employer_contribution', 'is_taxable' => false, 'is_statutory' => true, 'considered_for_pf_wage' => false, 'order' => 226],
 
             // Additional CTC-structurable allowances — usable in salary templates exactly
             // like Conveyance/Special Allowance above.
@@ -55,6 +57,24 @@ class SalaryComponentSeeder extends Seeder
             ['code' => 'JOINING_BONUS', 'name' => 'Joining Bonus', 'type' => 'earning', 'is_taxable' => true, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 303, 'is_part_of_ctc' => false],
             ['code' => 'REFERRAL_BONUS', 'name' => 'Referral Bonus', 'type' => 'earning', 'is_taxable' => true, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 304, 'is_part_of_ctc' => false],
             ['code' => 'ANNUAL_BONUS', 'name' => 'Annual Bonus', 'type' => 'earning', 'is_taxable' => true, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 305, 'is_part_of_ctc' => false],
+
+            // Loan/advance EMI recovered from net pay — engine-driven from the
+            // employee's active loans, never part of CTC. Non-statutory so it
+            // lands in "other deductions".
+            ['code' => 'LOAN_RECOVERY', 'name' => 'Loan / Advance Recovery', 'type' => 'deduction', 'is_taxable' => false, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 170, 'is_part_of_ctc' => false],
+
+            // Reimbursement paid through payroll. Taxable flag varies per claim, so
+            // the catalog row is marked non-taxable and the taxable portion is
+            // tracked on the reimbursement record itself.
+            ['code' => 'REIMBURSEMENT', 'name' => 'Reimbursement', 'type' => 'earning', 'is_taxable' => false, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 95, 'is_part_of_ctc' => false],
+
+            // Overtime / comp-off payout — attendance-driven extra pay entered per
+            // month, taxable, not part of CTC.
+            ['code' => 'OVERTIME_ALLOWANCE', 'name' => 'Overtime / Comp-off', 'type' => 'earning', 'is_taxable' => true, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 96, 'is_part_of_ctc' => false],
+
+            // Mid-service leave encashment paid through payroll (taxable for
+            // non-government employees).
+            ['code' => 'LEAVE_ENCASHMENT', 'name' => 'Leave Encashment', 'type' => 'earning', 'is_taxable' => true, 'is_statutory' => false, 'considered_for_pf_wage' => false, 'order' => 97, 'is_part_of_ctc' => false],
         ];
 
         foreach ($components as $c) {

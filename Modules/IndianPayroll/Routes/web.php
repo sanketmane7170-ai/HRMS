@@ -16,6 +16,12 @@ use Modules\IndianPayroll\Http\Controllers\TaxDeclarationController;
 use Modules\IndianPayroll\Http\Controllers\Form16Controller;
 use Modules\IndianPayroll\Http\Controllers\SettlementController;
 use Modules\IndianPayroll\Http\Controllers\ComplianceReportController;
+use Modules\IndianPayroll\Http\Controllers\EmployeeLoanController;
+use Modules\IndianPayroll\Http\Controllers\ReimbursementController;
+use Modules\IndianPayroll\Http\Controllers\PayrollOutputController;
+use Modules\IndianPayroll\Http\Controllers\OvertimeController;
+use Modules\IndianPayroll\Http\Controllers\LeaveEncashmentController;
+use Modules\IndianPayroll\Http\Controllers\StatutoryBonusController;
 use Modules\IndianPayroll\Http\Controllers\Employee\MyTaxDeclarationController;
 use Modules\IndianPayroll\Http\Controllers\Employee\MyPayslipController;
 
@@ -148,6 +154,15 @@ Route::middleware(['auth', 'subscription'])->group(function () {
                 Route::post('{run}/approve', [PayrollRunController::class, 'approve'])->name('approve');
                 Route::post('{run}/lock', [PayrollRunController::class, 'lock'])->name('lock');
                 Route::delete('{run}', [PayrollRunController::class, 'destroy'])->name('destroy');
+
+                // Run outputs: bank file, accounting JV, management/finance registers.
+                Route::get('{run}/bank-file', [PayrollOutputController::class, 'bankTransferFile'])->name('bank-file');
+                Route::get('{run}/journal-voucher', [PayrollOutputController::class, 'journalVoucher'])->name('journal-voucher');
+                Route::get('{run}/salary-register', [PayrollOutputController::class, 'salaryRegister'])->name('salary-register');
+                Route::get('{run}/payroll-summary', [PayrollOutputController::class, 'payrollSummary'])->name('payroll-summary');
+                Route::get('{run}/department-cost', [PayrollOutputController::class, 'departmentCost'])->name('department-cost');
+                Route::get('{run}/salary-variance', [PayrollOutputController::class, 'salaryVariance'])->name('salary-variance');
+                Route::get('{run}/pf-ecr', [PayrollOutputController::class, 'pfEcr'])->name('pf-ecr');
             });
 
             /*
@@ -197,6 +212,70 @@ Route::middleware(['auth', 'subscription'])->group(function () {
                 Route::get('{settlement}', [SettlementController::class, 'show'])->name('show');
                 Route::post('{settlement}/approve', [SettlementController::class, 'approve'])->name('approve');
                 Route::get('{settlement}/download', [SettlementController::class, 'download'])->name('download');
+            });
+
+            /*
+            |----------------------------------------------------------------
+            | Loans & Advances (recovered via payroll EMIs)
+            |----------------------------------------------------------------
+            */
+            Route::prefix('loans')->as('loans.')->group(function () {
+                Route::get('/', [EmployeeLoanController::class, 'index'])->name('index');
+                Route::get('create', [EmployeeLoanController::class, 'create'])->name('create');
+                Route::post('store', [EmployeeLoanController::class, 'store'])->name('store');
+                Route::get('{loan}', [EmployeeLoanController::class, 'show'])->name('show');
+                Route::post('{loan}/cancel', [EmployeeLoanController::class, 'cancel'])->name('cancel');
+            });
+
+            /*
+            |----------------------------------------------------------------
+            | Reimbursements (paid through payroll)
+            |----------------------------------------------------------------
+            */
+            Route::prefix('reimbursements')->as('reimbursements.')->group(function () {
+                Route::get('/', [ReimbursementController::class, 'index'])->name('index');
+                Route::get('create', [ReimbursementController::class, 'create'])->name('create');
+                Route::post('store', [ReimbursementController::class, 'store'])->name('store');
+                Route::post('{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('approve');
+                Route::post('{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reject');
+                Route::get('{reimbursement}/proof', [ReimbursementController::class, 'downloadProof'])->name('proof');
+            });
+
+            /*
+            |----------------------------------------------------------------
+            | Overtime & Comp-off (paid through payroll)
+            |----------------------------------------------------------------
+            */
+            Route::prefix('overtime')->as('overtime.')->group(function () {
+                Route::get('/', [OvertimeController::class, 'index'])->name('index');
+                Route::get('create', [OvertimeController::class, 'create'])->name('create');
+                Route::post('store', [OvertimeController::class, 'store'])->name('store');
+                Route::post('{overtime}/approve', [OvertimeController::class, 'approve'])->name('approve');
+                Route::post('{overtime}/reject', [OvertimeController::class, 'reject'])->name('reject');
+            });
+
+            /*
+            |----------------------------------------------------------------
+            | Mid-service Leave Encashment (paid through payroll)
+            |----------------------------------------------------------------
+            */
+            Route::prefix('leave-encashment')->as('leave-encashment.')->group(function () {
+                Route::get('/', [LeaveEncashmentController::class, 'index'])->name('index');
+                Route::get('create', [LeaveEncashmentController::class, 'create'])->name('create');
+                Route::post('store', [LeaveEncashmentController::class, 'store'])->name('store');
+                Route::post('{encashment}/approve', [LeaveEncashmentController::class, 'approve'])->name('approve');
+                Route::post('{encashment}/reject', [LeaveEncashmentController::class, 'reject'])->name('reject');
+            });
+
+            /*
+            |----------------------------------------------------------------
+            | Statutory Bonus (Payment of Bonus Act)
+            |----------------------------------------------------------------
+            */
+            Route::prefix('statutory-bonus')->as('statutory-bonus.')->group(function () {
+                Route::get('/', [StatutoryBonusController::class, 'index'])->name('index');
+                Route::post('generate', [StatutoryBonusController::class, 'generate'])->name('generate');
+                Route::post('{bonus}/approve', [StatutoryBonusController::class, 'approve'])->name('approve');
             });
 
             /*

@@ -23,21 +23,25 @@ class MailServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (Schema::hasTable('settings')) {
-            $exists = Setting::where('key', 'like', "%smtp_%")->exists();
-            if ($exists) {
-                $config = array(
-                    'driver'     =>     getSetting('smtp_driver'),
-                    'host'       =>    getSetting('smtp_host'),
-                    'port'       =>     getSetting('smtp_port'),
-                    'username'   =>     getSetting('smtp_username'),
-                    'password'   =>     getSetting('smtp_password'),
-                    'encryption' =>     getSetting('smtp_encryption'),
-                    'from'       =>     [
-                        'name' => getSetting('smtp_sender_name') ?? getSetting('site_title'),
-                        'address' => getSetting('smtp_sender_email') ?? getSetting('site_suppor_email')
-                    ]
-                );
-                Config::set('mail', $config);
+            // Only override when SMTP has actually been configured (host present),
+            // otherwise fall back to the .env / config/mail.php defaults.
+            if (getSetting('smtp_host')) {
+                $driver = getSetting('smtp_driver') ?: 'smtp';
+
+                // Override individual keys on the existing Laravel mail config
+                // structure (mail.default + mail.mailers.smtp.*). Replacing the
+                // whole "mail" array would wipe out "mailers"/"default" and break
+                // the mailer in Laravel 10+.
+                Config::set('mail.default', $driver);
+                Config::set("mail.mailers.{$driver}.transport", $driver);
+                Config::set("mail.mailers.{$driver}.host", getSetting('smtp_host'));
+                Config::set("mail.mailers.{$driver}.port", getSetting('smtp_port'));
+                Config::set("mail.mailers.{$driver}.username", getSetting('smtp_username'));
+                Config::set("mail.mailers.{$driver}.password", getSetting('smtp_password'));
+                Config::set("mail.mailers.{$driver}.encryption", getSetting('smtp_encryption') ?: null);
+
+                Config::set('mail.from.name', getSetting('smtp_sender_name') ?: getSetting('site_title'));
+                Config::set('mail.from.address', getSetting('smtp_sender_email') ?: getSetting('site_suppor_email'));
             }
         }
     }

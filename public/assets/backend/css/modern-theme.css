@@ -120,6 +120,11 @@ html, body {
     background: var(--wp-sidebar-bg) !important; /* fixed white anchor - stays put across light/dark toggle */
     border-right: 1px solid var(--wp-sidebar-border) !important;
     box-shadow: none !important;
+    /* Legacy style.css puts 10px padding on this scroll container; combined
+       with .sidebar-inner's padding-top it left a ~10-20px strip above the
+       sticky logo where scrolled menu items peeked through. Zero the padding
+       so the sticky logo pins flush to the top of the scrollport. */
+    padding: 0 !important;
 }
 
 /* Logo + wordmark, left-aligned to match the nav items below it rather than
@@ -168,6 +173,12 @@ html, body {
     height: auto !important;
     min-height: 100% !important;
     position: static !important;
+}
+
+/* Legacy style.css adds padding-top:10px here, which reintroduced the gap
+   above the sticky logo. Keep the top flush. */
+.sidebar-inner {
+    padding-top: 0 !important;
 }
 
 /* Hide legacy slimscroll injected bars */

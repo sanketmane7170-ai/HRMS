@@ -13,7 +13,7 @@ class PfSetting extends Model
 
     protected $fillable = [
         'effective_from', 'employee_rate', 'employer_rate', 'eps_rate',
-        'wage_ceiling', 'eps_wage_ceiling', 'admin_charges_rate', 'is_active',
+        'wage_ceiling', 'eps_wage_ceiling', 'admin_charges_rate', 'edli_charges_rate', 'is_active',
     ];
 
     protected $casts = [

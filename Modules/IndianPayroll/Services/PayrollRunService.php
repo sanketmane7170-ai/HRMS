@@ -7,9 +7,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
+use Modules\IndianPayroll\Entities\EmployeeLoan;
 use Modules\IndianPayroll\Entities\EmployeeProfile;
 use Modules\IndianPayroll\Entities\EmployeeSalaryStructure;
 use Modules\IndianPayroll\Entities\EsiSetting;
+use Modules\IndianPayroll\Entities\LeaveEncashment;
+use Modules\IndianPayroll\Entities\LoanRecovery;
+use Modules\IndianPayroll\Entities\OvertimeEntry;
+use Modules\IndianPayroll\Entities\Reimbursement;
 use Modules\IndianPayroll\Entities\GratuitySetting;
 use Modules\IndianPayroll\Entities\IncomeTaxSlab;
 use Modules\IndianPayroll\Entities\IncomeTaxSurchargeSlab;
@@ -172,6 +177,28 @@ class PayrollRunService
 
         Payslip::where('run_id', $run->id)->update(['status' => PayrollRun::STATUS_APPROVED]);
 
+        // Finalize reimbursements and overtime paid in this run.
+        Reimbursement::where('run_id', $run->id)
+            ->where('status', Reimbursement::STATUS_APPROVED)
+            ->update(['status' => Reimbursement::STATUS_PAID]);
+
+        OvertimeEntry::where('run_id', $run->id)
+            ->where('status', OvertimeEntry::STATUS_APPROVED)
+            ->update(['status' => OvertimeEntry::STATUS_PAID]);
+
+        LeaveEncashment::where('run_id', $run->id)
+            ->where('status', LeaveEncashment::STATUS_APPROVED)
+            ->update(['status' => LeaveEncashment::STATUS_PAID]);
+
+        // Auto-close loans that are now fully recovered.
+        $loanIds = LoanRecovery::where('run_id', $run->id)->pluck('loan_id')->unique();
+        EmployeeLoan::whereIn('id', $loanIds)->where('status', EmployeeLoan::STATUS_ACTIVE)->get()
+            ->each(function (EmployeeLoan $loan) {
+                if ($loan->outstandingBalance() <= 0) {
+                    $loan->update(['status' => EmployeeLoan::STATUS_CLOSED]);
+                }
+            });
+
         // Notify each employee. Wrapped in try/catch so a misconfigured mail driver or
         // missing queue table never blocks a legitimate approval in any environment.
         try {
@@ -267,6 +294,13 @@ class PayrollRunService
         $this->applyGratuityProvision($gratuitySetting, $structure, $lines);
         $regime = $this->applyIncomeTax($profile, $structure, $lines, $run->period_start, $taxSlabCache);
 
+        // Non-statutory, employee-specific lines computed after tax: loan EMIs
+        // recovered from net pay and approved reimbursements paid through payroll.
+        $this->applyOvertime($run, $profile, $lines);
+        $this->applyLeaveEncashment($run, $profile, $lines);
+        $this->applyLoanRecovery($run, $profile, $lines);
+        $this->applyReimbursements($run, $profile, $lines);
+
         $payslip = Payslip::updateOrCreate(
             ['run_id' => $run->id, 'user_id' => $profile->user_id],
             [
@@ -312,6 +346,14 @@ class PayrollRunService
         $lines[SalaryComponent::CODE_EPF_EMPLOYEE] = ['type' => SalaryComponent::TYPE_DEDUCTION, 'amount' => $result->employeeAmount];
         $lines[SalaryComponent::CODE_EPF_EMPLOYER] = ['type' => SalaryComponent::TYPE_EMPLOYER_CONTRIBUTION, 'amount' => $result->employerEpfAmount];
         $lines[SalaryComponent::CODE_EPS_EMPLOYER] = ['type' => SalaryComponent::TYPE_EMPLOYER_CONTRIBUTION, 'amount' => $result->employerEpsAmount];
+
+        // Employer-borne PF admin (A/c 2) and EDLI (A/c 21) charges.
+        if ($result->adminChargesAmount > 0) {
+            $lines[SalaryComponent::CODE_EPF_ADMIN_CHARGES] = ['type' => SalaryComponent::TYPE_EMPLOYER_CONTRIBUTION, 'amount' => $result->adminChargesAmount];
+        }
+        if ($result->edliChargesAmount > 0) {
+            $lines[SalaryComponent::CODE_EDLI_CHARGES] = ['type' => SalaryComponent::TYPE_EMPLOYER_CONTRIBUTION, 'amount' => $result->edliChargesAmount];
+        }
     }
 
     private function applyEsi(?EsiSetting $settings, EmployeeProfile $profile, float $grossProrated, array &$lines, PayrollRun $run): void
@@ -330,6 +372,146 @@ class PayrollRunService
 
         $lines[SalaryComponent::CODE_ESI_EMPLOYEE] = ['type' => SalaryComponent::TYPE_DEDUCTION, 'amount' => $result->employeeAmount];
         $lines[SalaryComponent::CODE_ESI_EMPLOYER] = ['type' => SalaryComponent::TYPE_EMPLOYER_CONTRIBUTION, 'amount' => $result->employerAmount];
+    }
+
+    /**
+     * Recover EMIs for the employee's active loans/advances. Idempotent across
+     * recomputes: this run's recovery rows for the employee are wiped and rebuilt
+     * from current loan state, while prior runs' recoveries (period before this
+     * run) drive the outstanding balance. A loan is never over-recovered — the
+     * last EMI is capped at the remaining balance.
+     */
+    private function applyLoanRecovery(PayrollRun $run, EmployeeProfile $profile, array &$lines): void
+    {
+        LoanRecovery::where('run_id', $run->id)->where('user_id', $profile->user_id)->delete();
+
+        $loans = EmployeeLoan::where('user_id', $profile->user_id)
+            ->where('status', EmployeeLoan::STATUS_ACTIVE)
+            ->get();
+
+        $total = 0.0;
+
+        foreach ($loans as $loan) {
+            $loanStart = Carbon::create($loan->start_year, $loan->start_month, 1);
+            if ($loanStart->gt($run->period_start)) {
+                continue; // recovery has not started yet
+            }
+
+            $recoveredBefore = (float) $loan->recoveries()
+                ->whereHas('run', fn ($q) => $q->where('period_start', '<', $run->period_start))
+                ->sum('amount');
+
+            $outstanding = round((float) $loan->principal_amount - $recoveredBefore, 2);
+            if ($outstanding <= 0) {
+                continue;
+            }
+
+            $emi = round(min((float) $loan->emi_amount, $outstanding), 2);
+
+            LoanRecovery::create([
+                'loan_id' => $loan->id,
+                'run_id' => $run->id,
+                'user_id' => $profile->user_id,
+                'amount' => $emi,
+            ]);
+
+            $total += $emi;
+        }
+
+        if ($total > 0) {
+            $lines[SalaryComponent::CODE_LOAN_RECOVERY] = [
+                'type' => SalaryComponent::TYPE_DEDUCTION,
+                'amount' => round($total, 2),
+            ];
+        }
+    }
+
+    /**
+     * Pay approved overtime / comp-off entries booked for this run's month. Tied
+     * to month/year so recompute is naturally idempotent.
+     */
+    private function applyOvertime(PayrollRun $run, EmployeeProfile $profile, array &$lines): void
+    {
+        $entries = OvertimeEntry::where('user_id', $profile->user_id)
+            ->where('month', $run->month)
+            ->where('year', $run->year)
+            ->where('status', OvertimeEntry::STATUS_APPROVED)
+            ->get();
+
+        if ($entries->isEmpty()) {
+            return;
+        }
+
+        $entries->each->update(['run_id' => $run->id]);
+        $total = round((float) $entries->sum('amount'), 2);
+
+        if ($total > 0) {
+            $lines[SalaryComponent::CODE_OVERTIME] = [
+                'type' => SalaryComponent::TYPE_EARNING,
+                'amount' => $total,
+            ];
+        }
+    }
+
+    /**
+     * Pay approved mid-service leave-encashment entries booked for this run's
+     * month. Month/year scoped, so recompute is idempotent.
+     */
+    private function applyLeaveEncashment(PayrollRun $run, EmployeeProfile $profile, array &$lines): void
+    {
+        $entries = LeaveEncashment::where('user_id', $profile->user_id)
+            ->where('month', $run->month)
+            ->where('year', $run->year)
+            ->where('status', LeaveEncashment::STATUS_APPROVED)
+            ->get();
+
+        if ($entries->isEmpty()) {
+            return;
+        }
+
+        $entries->each->update(['run_id' => $run->id]);
+        $total = round((float) $entries->sum('amount'), 2);
+
+        if ($total > 0) {
+            $lines[SalaryComponent::CODE_LEAVE_ENCASHMENT] = [
+                'type' => SalaryComponent::TYPE_EARNING,
+                'amount' => $total,
+            ];
+        }
+    }
+
+    /**
+     * Pay out approved reimbursement claims through this run. Each approved claim
+     * is attached to exactly one run; recompute re-attaches this run's own claims
+     * so it is idempotent. The taxable portion is recorded on the claim for
+     * year-end reconciliation (it does not retro-adjust this month's TDS).
+     */
+    private function applyReimbursements(PayrollRun $run, EmployeeProfile $profile, array &$lines): void
+    {
+        // Release this run's still-approved claims, then re-pull every unattached
+        // approved claim so the set is rebuilt cleanly on each compute.
+        Reimbursement::where('run_id', $run->id)
+            ->where('status', Reimbursement::STATUS_APPROVED)
+            ->update(['run_id' => null]);
+
+        $claims = Reimbursement::where('user_id', $profile->user_id)
+            ->where('status', Reimbursement::STATUS_APPROVED)
+            ->whereNull('run_id')
+            ->get();
+
+        $total = 0.0;
+
+        foreach ($claims as $claim) {
+            $claim->update(['run_id' => $run->id]);
+            $total += (float) $claim->claim_amount;
+        }
+
+        if ($total > 0) {
+            $lines[SalaryComponent::CODE_REIMBURSEMENT] = [
+                'type' => SalaryComponent::TYPE_EARNING,
+                'amount' => round($total, 2),
+            ];
+        }
     }
 
     private function wasEsiAppliedInContributionPeriod(int $userId, Carbon $periodStart): bool

@@ -63,6 +63,7 @@ class SettlementController extends Controller
             'last_working_day' => 'required|date',
             'pending_salary_amount' => 'nullable|numeric|min:0', // blank = auto-calculate from attendance
             'notice_pay_recovery' => 'nullable|numeric|min:0',
+            'asset_recovery' => 'nullable|numeric|min:0',
             'other_deductions' => 'nullable|numeric|min:0',
             'encash_leave_type_ids' => 'nullable|array',
             'encash_leave_type_ids.*' => 'integer',
@@ -92,17 +93,27 @@ class SettlementController extends Controller
 
         $pendingSalary = $data['pending_salary_amount'] ?? $this->computePendingSalary($user, $profile, $structure, $lastWorkingDay);
 
+        // Outstanding balance of the employee's active loans/advances, recovered in full at exit.
+        $loanRecovery = round((float) \Modules\IndianPayroll\Entities\EmployeeLoan::where('user_id', $user->id)
+            ->where('status', \Modules\IndianPayroll\Entities\EmployeeLoan::STATUS_ACTIVE)
+            ->get()
+            ->sum(fn ($loan) => $loan->outstandingBalance()), 2);
+
+        $assetRecovery = (float) ($data['asset_recovery'] ?? 0);
+
         $netPayable = round(
             $pendingSalary
             + $gratuity->grossAmount
             + $leaveEncashment['gross']
             - ($data['notice_pay_recovery'] ?? 0)
+            - $assetRecovery
+            - $loanRecovery
             - ($data['other_deductions'] ?? 0)
             - $finalTds,
             2
         );
 
-        $settlement = DB::transaction(function () use ($user, $profile, $data, $pendingSalary, $gratuity, $leaveEncashment, $finalTds, $netPayable) {
+        $settlement = DB::transaction(function () use ($user, $profile, $data, $pendingSalary, $gratuity, $leaveEncashment, $finalTds, $netPayable, $assetRecovery, $loanRecovery) {
             $settlement = FullFinalSettlement::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -113,12 +124,19 @@ class SettlementController extends Controller
                     'leave_encashment_amount' => $leaveEncashment['gross'],
                     'leave_encashment_taxable_amount' => $leaveEncashment['taxable'],
                     'notice_pay_recovery' => $data['notice_pay_recovery'] ?? 0,
+                    'asset_recovery' => $assetRecovery,
+                    'loan_recovery' => $loanRecovery,
                     'other_deductions' => $data['other_deductions'] ?? 0,
                     'final_tds' => $finalTds,
                     'net_payable' => $netPayable,
                     'status' => 'draft',
                 ]
             );
+
+            // Close the recovered loans so they don't keep deducting from payroll.
+            \Modules\IndianPayroll\Entities\EmployeeLoan::where('user_id', $user->id)
+                ->where('status', \Modules\IndianPayroll\Entities\EmployeeLoan::STATUS_ACTIVE)
+                ->update(['status' => \Modules\IndianPayroll\Entities\EmployeeLoan::STATUS_CLOSED]);
 
             $profile->update(['date_of_exit' => $data['last_working_day']]);
 

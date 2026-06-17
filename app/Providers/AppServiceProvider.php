@@ -27,8 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Author: Sanket - Force HTTPS in all environments except local
-        if (!app()->environment('local')) {
+        // Force HTTPS only when the configured app URL is actually served over
+        // HTTPS. This keeps asset()/url() on http when deployed on a plain-http
+        // host/port, and auto-enables https once APP_URL points at an https domain.
+        if (str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
 

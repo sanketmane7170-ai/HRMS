@@ -44,13 +44,6 @@
     <!-- RIGHT SECTION -->
     <ul class="nav user-menu" style="display: flex; align-items: center; gap: 1.25rem; flex-direction: row; margin-bottom: 0;">
 
-        <!-- Theme Toggle -->
-        <li class="nav-item" style="display: flex; align-items: center;">
-            <a href="javascript:void(0);" class="nav-link" id="theme-toggle-react-link" style="padding: 0;">
-                <div id="theme-toggle-react"></div>
-            </a>
-        </li>
-
         @if(Route::has('backend.languages.index'))
         <!-- Flag -->
         @include('multilingual::language-dropdown')

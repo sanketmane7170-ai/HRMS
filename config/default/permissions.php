@@ -266,4 +266,36 @@ return [
         'Edit',
         'Delete',
     ],
+    // Modules below are gated in the sidebar by a single "Manage X" permission
+    // (module-sidebar.blade.php). They were missing from this picker, so a role
+    // could never be granted/denied them. Keys must stay exactly like this so
+    // "$permission $module" matches the permission names the sidebar checks
+    // (e.g. 'Task' => 'Manage Task', not 'Task Management').
+    'Company Document'       => [
+        'Manage',
+    ],
+    'Training'               => [
+        'Manage',
+    ],
+    'Performance Review'     => [
+        'Manage',
+    ],
+    'Task'                   => [
+        'Manage',
+    ],
+    'Indian Payroll'         => [
+        'Manage',
+    ],
+    'International Payroll'   => [
+        'Manage',
+    ],
+    'Company Policy'         => [
+        'Manage',
+    ],
+    'Resignation'            => [
+        'Manage',
+    ],
+    'Onboarding'             => [
+        'Manage',
+    ],
 ];

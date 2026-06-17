@@ -47,10 +47,15 @@
                         <input type="number" step="0.01" name="notice_pay_recovery" class="form-control" value="0">
                     </div>
                     <div class="col-md-4 form-group">
+                        <label>{{ __trans('asset_recovery') }}</label>
+                        <input type="number" step="0.01" name="asset_recovery" class="form-control" value="0">
+                    </div>
+                    <div class="col-md-4 form-group">
                         <label>{{ __trans('other_deductions') }}</label>
                         <input type="number" step="0.01" name="other_deductions" class="form-control" value="0">
                     </div>
                 </div>
+                <p class="text-muted small mt-2">{{ __trans('loan_recovery_auto_note') }}</p>
 
                 <button type="submit" class="btn btn-primary">{{ __trans('compute_settlement') }}</button>
             </form>

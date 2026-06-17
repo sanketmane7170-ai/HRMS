@@ -24,7 +24,9 @@ class RoleController extends Controller
     {
         canPerform('Manage Role');
         if ($request->ajax()) {
-            $data = Role::whereNotIn('name', [User::ROLE_ADMIN, User::ROLE_SUPER_ADMIN]);
+            // 'admin' is now an editable, permission-driven role so it shows in
+            // the list. Only 'superadmin' (god-mode) stays hidden/uneditable.
+            $data = Role::whereNotIn('name', [User::ROLE_SUPER_ADMIN]);
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('name', function ($row) {
@@ -59,7 +61,7 @@ class RoleController extends Controller
         $response = getErrorResponse();
         try {
             $role = Role::create($data);
-            $role->givePermissionTo($request->permissions);
+            $role->syncPermissions($this->validPermissions($request->permissions));
             $response = getSuccessResponse(createFlashMessage("Role", "Created"));
         } catch (Exception $e) {
             $response['error'] = $e->getMessage();
@@ -100,13 +102,27 @@ class RoleController extends Controller
             //     $role->update($data);
             // }
             $role->update($data);
-            $role->syncPermissions($request->permissions);
+            $role->syncPermissions($this->validPermissions($request->permissions));
             $response = getSuccessResponse(createFlashMessage("Role", "Updated"));
         } catch (Exception $e) {
             $response['error'] = $e->getMessage();
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * Keep only the submitted permission names that actually exist as
+     * Permission records for the web guard. The module-grouped picker builds
+     * names like "Manage User" from config; a few config labels have no
+     * matching permission, and Spatie throws if any unknown name is synced.
+     */
+    protected function validPermissions($permissions): array
+    {
+        return Permission::whereIn('name', (array) $permissions)
+            ->where('guard_name', 'web')
+            ->pluck('name')
+            ->all();
     }
 
     /**
