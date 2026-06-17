@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/onboarding",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Onboarding\\": "",
+            "Modules\\Onboarding\\App\\": "app/",
+            "Modules\\Onboarding\\Database\\Factories\\": "database/factories/",
+            "Modules\\Onboarding\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Onboarding\\Tests\\": "tests/"
+        }
+    }
+}

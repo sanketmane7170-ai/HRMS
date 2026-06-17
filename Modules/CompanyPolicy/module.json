@@ -1,0 +1,11 @@
+{
+    "name": "CompanyPolicy",
+    "alias": "companypolicy",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CompanyPolicy\\Providers\\CompanyPolicyServiceProvider"
+    ],
+    "files": []
+}

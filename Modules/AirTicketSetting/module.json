@@ -1,0 +1,11 @@
+{
+    "name": "AirTicketSetting",
+    "alias": "airticketsetting",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AirTicketSetting\\Providers\\AirTicketSettingServiceProvider"
+    ],
+    "files": []
+}

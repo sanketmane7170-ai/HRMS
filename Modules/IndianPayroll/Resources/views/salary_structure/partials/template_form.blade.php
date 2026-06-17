@@ -1,0 +1,31 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ $template ? __trans('edit_template') : __trans('add_template') }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form method="POST" action="{{ $template ? route('backend.indian-payroll.salary-templates.update', $template) : route('backend.indian-payroll.salary-templates.store') }}">
+            @csrf
+            @if($template) @method('PUT') @endif
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>{{ __trans('name') }}</label>
+                    <input type="text" name="name" class="form-control" required value="{{ $template->name ?? '' }}">
+                </div>
+                <div class="form-group">
+                    <label>{{ __trans('description') }}</label>
+                    <textarea name="description" class="form-control">{{ $template->description ?? '' }}</textarea>
+                </div>
+                @if($template)
+                <div class="form-check form-switch mb-2">
+                    <input type="checkbox" class="form-check-input" name="is_active" value="1" @checked($template->is_active)>
+                    <label class="form-check-label">{{ __trans('active') }}</label>
+                </div>
+                @endif
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">{{ __trans('save') }}</button>
+            </div>
+        </form>
+    </div>
+</div>

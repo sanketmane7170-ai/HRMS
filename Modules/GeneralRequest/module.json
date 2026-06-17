@@ -1,0 +1,11 @@
+{
+    "name": "GeneralRequest",
+    "alias": "generalrequest",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\GeneralRequest\\Providers\\GeneralRequestServiceProvider"
+    ],
+    "files": []
+}

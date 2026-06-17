@@ -1,0 +1,24 @@
+{
+    "name": "nwidart/indianpayroll",
+    "description": "",
+    "authors": [],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\IndianPayroll\\": "",
+            "Modules\\IndianPayroll\\App\\": "app/",
+            "Modules\\IndianPayroll\\Database\\Factories\\": "database/factories/",
+            "Modules\\IndianPayroll\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\IndianPayroll\\Tests\\": "tests/"
+        }
+    }
+}

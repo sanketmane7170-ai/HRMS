@@ -1,0 +1,11 @@
+{
+    "name": "AgenticAI",
+    "alias": "agenticai",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AgenticAI\\Providers\\AgenticAIServiceProvider"
+    ],
+    "files": []
+}

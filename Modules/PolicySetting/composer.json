@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/policysetting",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PolicySetting\\": "",
+            "Modules\\PolicySetting\\App\\": "app/",
+            "Modules\\PolicySetting\\Database\\Factories\\": "database/factories/",
+            "Modules\\PolicySetting\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\PolicySetting\\Tests\\": "tests/"
+        }
+    }
+}

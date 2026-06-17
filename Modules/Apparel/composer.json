@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/apparel",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Apparel\\": "",
+            "Modules\\Apparel\\App\\": "app/",
+            "Modules\\Apparel\\Database\\Factories\\": "database/factories/",
+            "Modules\\Apparel\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Apparel\\Tests\\": "tests/"
+        }
+    }
+}

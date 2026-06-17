@@ -1,0 +1,11 @@
+{
+    "name": "PolicySetting",
+    "alias": "policysetting",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\PolicySetting\\Providers\\PolicySettingServiceProvider"
+    ],
+    "files": []
+}

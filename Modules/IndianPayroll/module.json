@@ -1,0 +1,11 @@
+{
+    "name": "IndianPayroll",
+    "alias": "indianpayroll",
+    "description": "Standalone statutory payroll engine for India-based employees: salary structuring, EPF, ESI, Professional Tax, LWF, Gratuity, Income Tax (Old & New regime), and compliance reporting.",
+    "keywords": ["payroll", "india", "epf", "esi", "tds", "gratuity"],
+    "priority": 0,
+    "providers": [
+        "Modules\\IndianPayroll\\Providers\\IndianPayrollServiceProvider"
+    ],
+    "files": []
+}

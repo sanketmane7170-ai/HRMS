@@ -1,0 +1,985 @@
+/* =========================================================
+   2026 'State-of-the-Art' UI Design System
+   WorkPilot Dashboard Redesign
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* --- LIGHT THEME (Structural Hardening) --- */
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #475569;
+    --border: #E2E8F0;      /* Slate-200 for clean light structure */
+    
+    --wp-primary: #4F46E5;
+    --wp-primary-hover: #4338CA;
+    --wp-accent: #3B82F6;
+    --wp-accent-soft: rgba(79, 70, 229, 0.08);
+    
+    /* Sidebar - plain white, fixed regardless of light/dark mode toggle.
+       No saturated "brand" colors here by design - just neutral grays plus a
+       single thin accent bar on the active item. */
+    --wp-sidebar-bg: #FFFFFF;
+    --wp-sidebar-border: #EDF1F5;
+    --wp-sidebar-text: #1E293B;       /* hover/active text - Slate-800 */
+    --wp-sidebar-text-muted: #64748B; /* default icon/text - Slate-500 */
+    --wp-sidebar-hover-bg: #F8FAFC;
+    --wp-sidebar-active-bg: #F1F5F9;
+    --wp-sidebar-active-accent: #4F46E5;
+
+    --wp-radius: 16px;
+    
+    /* Premium Shadows */
+    --wp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --wp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --wp-shadow-premium: 0 12px 24px -6px rgba(0, 0, 0, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* --- DARK THEME OVERRIDES --- */
+.dark {
+    --bg: #0F172A;
+    --card: #1E293B;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --border: #334155;      /* Slate-700 for deep dark structure */
+    --wp-accent-soft: rgba(99, 102, 241, 0.15);
+}
+
+/* 1. GLOBAL RESETS & TYPOGRAPHY */
+body, .page-wrapper {
+    background: var(--bg) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: var(--text-primary) !important;
+}
+
+/* LAYOUT SCROLL FIXES (Independent Panels) */
+html, body {
+    height: 100vh !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.main-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    overflow: hidden !important;
+}
+
+/* Base Layout Variables */
+:root {
+    --sidebar-width: 270px;
+}
+
+.mini-sidebar {
+    --sidebar-width: 70px;
+}
+
+/* Container for Sidebar + Content */
+.page-wrapper {
+    flex: 1 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    margin-left: var(--sidebar-width) !important;
+    padding-top: 60px !important; /* Space for Header */
+    background: var(--bg) !important;
+    scrollbar-width: thin !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 1 !important;
+}
+
+/* ==========================================================
+   SIDEBAR - plain, professional, no motion/shadow flourishes
+   ========================================================== */
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    /* Bootstrap sets "scroll-behavior: smooth" globally on :root, which made
+       the JS that scrolls the sidebar to the active item on page load animate
+       slowly into place instead of landing there instantly - reading as the
+       sidebar "resetting to the top" before catching up. */
+    scroll-behavior: auto !important;
+    z-index: 1001 !important;
+    flex-shrink: 0 !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(15, 23, 42, 0.15) transparent !important;
+    transition: width 0.2s ease !important;
+    background: var(--wp-sidebar-bg) !important; /* fixed white anchor - stays put across light/dark toggle */
+    border-right: 1px solid var(--wp-sidebar-border) !important;
+    box-shadow: none !important;
+}
+
+/* Logo + wordmark, left-aligned to match the nav items below it rather than
+   centered in its own box. Sticky so it stays visible while the menu list
+   scrolls underneath (previously the whole sidebar scrolled as one block and
+   the logo disappeared off-screen). */
+.header-left {
+    background: var(--wp-sidebar-bg) !important;
+    border-right: 1px solid var(--wp-sidebar-border) !important;
+    border-bottom: 1px solid var(--wp-sidebar-border) !important;
+    height: 64px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 0 20px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    box-shadow: none !important;
+}
+
+.header-left .logo {
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+/* Logo is now a single wide image with the wordmark baked in (icon + name
+   combined), not a small square icon, so it's unconstrained on width and
+   just scales to the sidebar's available height. */
+.header-left .logo img {
+    height: 44px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.sidebar-inner,
+.slimScrollDiv,
+.sidebar-menu {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100% !important;
+    position: static !important;
+}
+
+/* Hide legacy slimscroll injected bars */
+.slimScrollBar, 
+.slimScrollRail {
+    display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+}
+
+/* Ensure content visibility on mobile */
+@media (max-width: 991.98px) {
+    .page-wrapper {
+        margin-left: 0 !important;
+    }
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+}
+
+p, span, b, strong, td, th {
+    color: inherit; /* Allow parent to control or default to text-secondary */
+}
+
+/* 1. LAYOUT STRUCTURAL ANCHORING */
+.header {
+    background: var(--card) !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: none !important;
+}
+
+/* NOTE: all sidebar styling (logo, link, hover, active, submenu, .menu-title)
+   lives in one consolidated block further down - search for "SIDEBAR
+   NAVIGATION ITEMS". This file used to have 2-3 separate, conflicting copies
+   of the same rules scattered around, fighting each other via selector
+   specificity and producing inconsistent results. */
+
+/* 2. CARD MODERNIZATION (Structural High-Contrast) */
+.card, .top-stat-box, .top-stat-box-1, .top-stat-box-2, .top-stat-box-3, .top-stat-box-4, .top-stat-box-5 {
+    background: var(--card) !important;
+    color: var(--text-primary) !important; /* Legacy theme leaves this white; re-anchor to the active text color */
+    border: 1px solid var(--border) !important; /* Global Structural Border */
+    border-radius: var(--wp-radius) !important;
+    box-shadow: var(--wp-shadow-sm) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.card:hover, .top-stat-box:hover {
+    box-shadow: var(--wp-shadow-md) !important;
+    transform: translateY(-2px);
+    border-color: var(--wp-primary) !important; /* Active border state */
+}
+
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+/* 3. TABLE BORDER HARDENING
+   style.css has a blanket ".table { color: white; }" rule (assumes a dark
+   background that doesn't exist in this redesign). Tables that get their own
+   "thead th" / "tbody td" color override further down survive it, but plain
+   borderless label/value tables (e.g. Indian Payroll's employee profile page)
+   have neither a <thead> nor any cell-level override, so they inherited
+   white-on-white text with nothing to override it back to dark. */
+.table {
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th, .table td {
+    border-color: var(--border) !important;
+}
+
+
+/* Dashboard Icon Visibility Fix (Light Mode Transformation)
+   Only applies to .dash-widget-icon on plain (white/light) cards. The
+   .top-stat-box-1..5 variants all have their own dark/colorful gradient
+   backgrounds (defined in style.css) regardless of light/dark mode, so
+   darkening their white SVG icons made them nearly invisible against navy. */
+.dash-widget-icon img {
+    filter: brightness(0.2) grayscale(1) invert(0) !important; /* Turn white SVG to dark gray */
+    transition: filter 0.3s ease;
+}
+
+.dark .dash-widget-icon img {
+    filter: none !important; /* Keep white icons in dark mode */
+}
+
+/* top-stat-box-1..4 keep their dark/colorful gradient backgrounds (style.css),
+   so their white icons stay unfiltered. top-stat-box-5 is now a plain white
+   card (see below), so it falls through to the .dash-widget-icon darkening
+   rule above like any other light-background card. */
+.top-stat-box-1 img,
+.top-stat-box-2 img,
+.top-stat-box-3 img,
+.top-stat-box-4 img {
+    filter: none !important;
+}
+
+/* 3. TYPOGRAPHY & TEXT OVERRIDES */
+.text-muted {
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.dash-title p {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+}
+
+.dash-counts h3 {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+
+.card-body, .top-stat-box .card-body {
+    padding: 28px !important;
+}
+
+/* KPI tiles: a plain Bootstrap col-xl-3 row left a huge empty gap whenever
+   fewer than 4 tiles existed (often just 1-2). Sized-to-content flex tiles
+   sit compactly instead of stretching across an artificial 4-column grid. */
+.kpi-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    margin-bottom: 8px !important;
+}
+
+.kpi-tile {
+    flex: 0 1 260px !important;
+    max-width: 320px !important;
+}
+
+.kpi-tile .card {
+    margin-bottom: 0 !important;
+    height: 100%;
+}
+
+.kpi-tile .top-stat-box .card-body {
+    padding: 20px !important;
+}
+
+.kpi-tile .dash-widget-icon img {
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.kpi-tile .dash-counts h3 {
+    font-size: 1.75rem !important;
+    margin-bottom: 2px !important;
+}
+
+@media (max-width: 575.98px) {
+    .kpi-tile {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Plain cards show the parent .card background through. Stat-box cards (.top-stat-box,
+   .top-stat-box-1..4) are excluded so their gradient backgrounds from style.css
+   remain visible instead of being painted over. */
+.card:not(.top-stat-box) > .card-body {
+    background: transparent !important;
+}
+
+/* top-stat-box-5 (the "Total Employees" / department KPI tiles) used a hardcoded
+   navy background (style.css) instead of a gradient like -1..4. Switched to the
+   same white/dark theme-aware card color as the rest of the dashboard. */
+.top-stat-box-5 .card-body {
+    background: var(--card) !important;
+}
+
+.top-stat-box-5 {
+    border: 1px solid var(--border) !important;
+}
+
+.card-header {
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 20px 28px !important;
+}
+
+.card-title {
+    font-size: 1.1rem !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary) !important;
+}
+
+/* 3. WIDGET-SPECIFIC REFINEMENTS */
+
+/* Top Stats Numbers */
+.dash-counts h3 {
+    font-size: 2.25rem !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 4px;
+    font-weight: 800 !important;
+}
+
+.dash-title p {
+    color: var(--text-secondary) !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em;
+}
+
+/* Circular Progress Bar Enhancement */
+.progress.progress-round {
+    width: 130px !important;
+    height: 130px !important;
+    background: var(--bg) !important;
+    border-radius: 50%;
+}
+
+.progress.progress-round::after {
+    border-color: var(--bg) !important;
+    border-width: 8px !important;
+}
+
+.progress.progress-round .progress-bar {
+    border-width: 8px !important;
+    border-color: var(--wp-primary) !important;
+}
+
+.progress-value .h2 {
+    color: var(--wp-primary) !important;
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+}
+
+/* Document List Boxes */
+.doc-exp-right h3 {
+    color: var(--text-primary) !important;
+    font-size: 2rem !important;
+    margin-bottom: 0px !important;
+}
+
+.doc-exp-right p {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+    line-height: 1.4;
+}
+
+.doc-exp-left {
+    padding-right: 20px !important;
+}
+
+.doc-exp-left img {
+    width: 65px !important;
+    height: 65px !important;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+/* 4. TABLES & LISTS MODERNIZATION */
+.table {
+    margin-bottom: 0 !important;
+}
+
+.table thead th {
+    background: var(--bg) !important;
+    color: var(--text-secondary) !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 24px !important;
+    border-bottom: 2px solid var(--border) !important;
+}
+
+.table tbody td {
+    padding: 18px 24px !important;
+    vertical-align: middle !important;
+    color: var(--text-secondary) !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--bg) !important;
+}
+
+/* 5. BUTTONS & UI ELEMENTS */
+.btn-outline-primary {
+    border: 1px solid var(--border) !important;
+    color: var(--text-secondary) !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    transition: all 0.2s !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--wp-primary) !important;
+    border-color: var(--wp-primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+    transform: translateY(-1px);
+}
+
+.badge-success { background: #DCFCE7 !important; color: #15803D !important; padding: 6px 12px !important; border-radius: 8px !important; }
+.badge-danger { background: #FEE2E2 !important; color: #B91C1C !important; padding: 6px 12px !important; border-radius: 8px !important; }
+
+/* 6. SIDEBAR NAVIGATION ITEMS
+   Design rules for this section: no box-shadow anywhere, no transform/scale
+   animation on hover or active, only flat color/background transitions.
+   Active state is a light neutral row + a thin accent bar (GitHub/Linear/
+   Vercel pattern) instead of a saturated color block. */
+.sidebar-menu {
+    margin-top: 0 !important; /* legacy style.css adds a 20px margin-top here */
+    padding: 12px 12px !important;
+    transition: padding 0.2s ease !important;
+}
+
+.mini-sidebar .sidebar-menu {
+    padding: 12px 8px !important;
+}
+
+.sidebar-menu > ul {
+    padding-top: 0 !important; /* legacy style.css adds 15px here too - stacked with the above it left ~49px of dead space under the logo */
+}
+
+.sidebar-menu ul li a {
+    position: relative !important; /* anchors the active-state accent bar */
+    color: var(--wp-sidebar-text-muted) !important;
+    border-radius: 8px !important;
+    padding: 9px 14px !important;
+    margin: 2px 0 !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+}
+
+.mini-sidebar .sidebar-menu ul li a {
+    padding: 9px 0 !important;
+    justify-content: center !important;
+    gap: 0 !important;
+}
+
+/* Long labels (e.g. "Live Presence Board") shrink with an ellipsis instead of
+   pushing a trailing badge past the sidebar edge and getting hard-clipped. */
+.sidebar-menu ul li a > span:not(.menu-arrow) {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    min-width: 0 !important;
+}
+
+.sidebar-menu ul li a .badge {
+    flex-shrink: 0 !important;
+    padding: 3px 7px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.03em;
+    box-shadow: none !important;
+}
+
+/* The "LIVE" tag used the legacy solid navy badge-primary style, which read
+   as a loud, saturated accent against the new plain-white sidebar. Matched
+   it to the same soft, muted pill style as the other badges instead. */
+.sidebar-menu .badge-primary {
+    background: #DCFCE7 !important;
+    color: #15803D !important;
+}
+
+.sidebar-menu ul li a i {
+    color: var(--wp-sidebar-text-muted) !important;
+    font-size: 1rem !important;
+    width: 20px !important; /* standardized width so labels line up */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mini-sidebar .sidebar-menu ul li a span,
+.mini-sidebar .sidebar-menu ul li a .menu-arrow,
+.mini-sidebar .sidebar-menu ul li a .badge,
+.mini-sidebar .menu-title {
+    display: none !important;
+}
+
+.mini-sidebar .sidebar-menu ul li a i {
+    margin: 0 !important;
+}
+
+/* Hover state - flat color/background change only, nothing moves */
+.sidebar-menu ul li a:hover,
+.sidebar-menu > ul > li > a:hover {
+    background-color: var(--wp-sidebar-hover-bg) !important;
+    color: var(--wp-sidebar-text) !important;
+}
+
+.sidebar-menu ul li a:hover i {
+    color: var(--wp-sidebar-text) !important;
+}
+
+/* Active state - light neutral background + a thin accent bar on the left
+   edge (no shadow, no solid color fill). Top-level items mark "active" on
+   the <li>; submenu items mark it directly on the <a> (see note below). */
+.sidebar-menu li.active > a,
+.sidebar-menu ul ul a.active {
+    background: var(--wp-sidebar-active-bg) !important;
+    color: var(--wp-sidebar-text) !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-radius: 0 8px 8px 0 !important; /* square left edge to sit flush against the accent bar */
+}
+
+.sidebar-menu li.active > a::before,
+.sidebar-menu ul ul a.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: var(--wp-sidebar-active-accent);
+}
+
+.sidebar-menu li.active > a i,
+.sidebar-menu ul ul a.active i {
+    color: var(--wp-sidebar-active-accent) !important;
+}
+
+.mini-sidebar .sidebar-menu li.active > a {
+    border-radius: 8px !important; /* no room for an offset bar in the icon-only rail */
+}
+
+.mini-sidebar .sidebar-menu li.active > a::before {
+    display: none !important;
+}
+
+/* Submenu items mark themselves active by putting the "active" class directly
+   on the <a> (not the parent <li> like top-level items do), so the active-
+   state rule above would otherwise never match them - selecting "Set
+   Allowance & Deduction" etc previously showed no visual feedback at all. */
+.sidebar-menu ul ul {
+    background: var(--wp-sidebar-hover-bg) !important;
+    border-radius: 8px;
+    margin-top: 4px !important;
+    padding-left: 0 !important;
+}
+
+/* Submenu links (e.g. "Employee Statutory Profiles") put their label text
+   directly inside the <a> with no wrapping <span> - unlike top-level items,
+   so the ellipsis rule that targets "> span" never applied to them and long
+   labels just ran past the sidebar's edge uncontained. Applying the
+   truncation to the <a> itself (overflow/white-space already set on it via
+   the base rule) fixes it without needing to touch every module's blade file. */
+.sidebar-menu ul ul a {
+    padding-left: 46px !important;
+    font-size: 13px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* The legacy chevron is "position: absolute" (style.css), completely outside
+   the flex layout that sizes the icon/label/badge - so it never reserved any
+   space for itself, and long labels ran straight underneath/behind it. Pulling
+   it back into normal flex flow (pushed to the far right, never shrinking)
+   means the label's ellipsis now truncates before reaching the arrow instead
+   of overlapping it. */
+.sidebar-menu .menu-arrow {
+    position: static !important;
+    color: var(--wp-sidebar-text-muted) !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    padding-left: 8px !important;
+}
+
+/* Menu Titles */
+.menu-title {
+    color: var(--wp-sidebar-text-muted) !important;
+    opacity: 0.6;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 700 !important;
+    margin-top: 20px !important;
+    margin-bottom: 8px !important;
+    padding: 0 14px !important;
+}
+
+/* Header / Top Nav
+   Two real misalignments here: (1) header.blade.php sets height:60px inline,
+   which beats the legacy style.css height:70px, while .header-left (the
+   sidebar logo box) is 72px - so the navbar's bottom border sat 12px above
+   the sidebar's. (2) the legacy "left: 260px" never matched the actual
+   270px sidebar width, leaving a visible gap/overlap at the seam. */
+.header {
+    background: var(--card) !important;
+    border-bottom: 1px solid var(--border) !important;
+    backdrop-filter: blur(12px);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    height: 72px !important;
+    left: var(--sidebar-width) !important;
+}
+
+.mini-sidebar .header {
+    left: 70px !important;
+}
+
+/* Collapsed sidebar: there's no separate icon-only asset - the logo is one
+   wide image with the wordmark baked in - so crop to just its left edge
+   (where the icon mark sits) instead of trying to squeeze the whole wide
+   image into the narrow 70px rail. */
+.mini-sidebar .header-left {
+    width: 70px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+}
+
+.mini-sidebar .header-left .logo {
+    width: 32px !important;
+    height: 32px !important;
+    justify-content: flex-start !important;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.mini-sidebar .header-left .logo img {
+    height: 32px !important;
+    width: auto !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    object-position: left center !important;
+}
+
+.header-left {
+    transition: width 0.2s ease !important;
+}
+
+/* 6. HEADER NAVIGATION ALIGNMENT
+   header.blade.php already sets "align-items: center" inline on the <ul> and
+   each <li> - the cleanest possible approach since every item (theme toggle,
+   bell, avatar+name) has a different natural height. The previous version of
+   this rule forced "align-items: flex-start !important" instead (fighting the
+   blade's own inline style) and then tried to fake centering back in with
+   hardcoded padding-top guesses (14px / 18px / a "2px optical nudge") tuned
+   for a header height that didn't even match the actual rendered height.
+   Letting flexbox center everything properly removes the need for any of that. */
+.user-menu {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 15px 0 0 !important;
+    list-style: none !important;
+}
+
+.user-menu > li {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    padding: 0 8px !important;
+}
+
+.user-menu .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--text-secondary) !important;
+    transition: color 0.2s;
+}
+
+#theme-toggle-react {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 32px;
+}
+
+/* Theme Toggle Button Style (Legacy Fallback Support) */
+#theme-toggle, .theme-toggle-btn {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--bg);
+    margin-right: 15px;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+}
+
+#theme-toggle:hover {
+    background: var(--wp-accent-soft);
+    color: var(--wp-primary);
+}
+
+/* 7. MAIN FOOTER (Restored Dashboard Style) */
+.main-footer {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-align: center;
+    width: 100%;
+}
+
+.main-footer p {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* PREMIUM UI UTILITIES (ICON SHAPES) */
+.icon-shape-premium {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--wp-accent-soft);
+    color: var(--wp-primary);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.bg-primary-soft { background: var(--wp-accent-soft) !important; }
+.bg-success-soft { background: rgba(34, 197, 94, 0.1) !important; }
+.bg-warning-soft { background: rgba(245, 158, 11, 0.1) !important; }
+.bg-danger-soft { background: rgba(239, 68, 68, 0.1) !important; }
+
+[data-theme='dark'] .bg-primary-soft { background: rgba(99, 102, 241, 0.2) !important; }
+[data-theme='dark'] .bg-success-soft { background: rgba(34, 197, 94, 0.2) !important; }
+
+/* FIX FOR DASHBOARD INLINE BACKGROUNDS & MISC */
+[style*="background-color:#042356"], 
+[style*="background-color: #042356"],
+[style*="background-color: rgb(4, 35, 86)"],
+[style*="border-color:#042356"],
+[style*="border-color: #042356"] {
+    background-color: var(--card) !important;
+    border-color: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+/* Aggressive Global Border Kill for Legacy Navy */
+[class*="card"], [class*="header"] {
+    border-top-color: transparent !important;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+}
+
+/* =========================================================
+   GLOBAL "PROCESSING" DEEP WORK OVERRIDES
+   Hiding old-school text loaders and replacing with modern UI
+   ========================================================= */
+
+.dataTables_processing, 
+.processing-text,
+#processing,
+#loader-text {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--wp-radius) !important;
+    color: transparent !important; /* Hide old text */
+    min-height: 4px !important;
+    padding: 0 !important;
+    height: 4px !important;
+    overflow: hidden !important;
+    box-shadow: var(--wp-shadow-sm) !important;
+    z-index: 9999 !important;
+}
+
+.dataTables_processing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--wp-primary), transparent);
+    background-size: 200% 100%;
+    animation: wp-loading-progress 1s infinite linear;
+}
+
+/* 📊 DASHBOARD WIDGET PREMIUM UTILITIES */
+.feed-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feed-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--bg);
+    border-left: 4px solid var(--wp-primary);
+    transition: transform 0.2s ease;
+}
+
+.feed-item:hover {
+    transform: translateX(4px);
+}
+
+.gauge-wrap {
+    width: 100%;
+    background: var(--border);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--wp-primary), #3b82f6);
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gauge-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 📊 WORK STATUS PICKER STYLES */
+.status-drop-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 10px 16px !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    border-radius: 8px !important;
+    margin: 2px 8px !important;
+    transition: all 0.2s !important;
+}
+
+.status-drop-item:hover {
+    background: var(--bg) !important;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-picker-btn {
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
+    background: transparent !important;
+    color: var(--theme-text-color) !important;
+    margin-top: 14px;
+}
+
+.status-picker-btn:hover {
+    background: rgba(0,0,0,0.05) !important;
+}
+
+.status-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: var(--wp-primary);
+    border-radius: 50%;
+    animation: wp-spin 0.6s linear infinite;
+    display: none;
+}
+
+@keyframes wp-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* The "live" icon no longer pulses - kept fully static per "no unnecessary
+   animation" direction. The class name stays so the markup doesn't need to
+   change, it just has no animation attached to it now. */
+.pulse-icon {
+    animation: none !important;
+}
+

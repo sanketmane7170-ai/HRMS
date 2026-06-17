@@ -1,0 +1,11 @@
+{
+    "name": "Resignation",
+    "alias": "resignation",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Resignation\\Providers\\ResignationServiceProvider"
+    ],
+    "files": []
+}

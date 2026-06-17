@@ -1,0 +1,19 @@
+<?php
+
+namespace Modules\Asset\Entities;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class AssetManufacturer extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['name'];
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
+}

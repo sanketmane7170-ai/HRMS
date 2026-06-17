@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-border: var(--border);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--bg);
+  --color-muted-foreground: var(--text-secondary);
+  --color-accent: #6366f1;
+  --color-primary: #6366f1;
+  --color-primary-foreground: #ffffff;
+  --color-card: var(--card);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+}
+
+@source "../js/**/*.tsx";
+@source "../js/**/*.jsx";
+
+@layer base {
+  :root {
+    --border: #e2e8f0;
+  }
+  .dark {
+    --border: #334155;
+  }
+}

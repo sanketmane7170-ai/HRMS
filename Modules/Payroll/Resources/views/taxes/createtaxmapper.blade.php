@@ -1,0 +1,45 @@
+<div class="modal-dialog modal-lg" style="max-width: 523px !important;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">{{__trans('edit_taxes')}} </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ route('backend.payroll.employeeTaxUsers.store') }}" datatable="true" method="POST" class="ajax-form-submit reset">
+            @csrf
+            @method('POST')
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="user_id">User Names</label>
+                            <select name="user_id" class="form-control" required>
+                                @foreach($user as $userId => $userName)
+                                <option value="{{ $userId }}">{{ $userName }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="employee_tax_id">Employee Tax:</label>
+                            <select name="employee_tax_id" class="form-control" required>
+                                @foreach($taxes as $taxId => $taxName)
+                                <option value="{{ $taxId }}">{{ $taxName }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">{{__trans('close')}}</button>
+                <button type="submit" class="btn btn-info waves-effect waves-light">{{__trans('save')}} </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    loadAjaxSelect2()
+</script>
