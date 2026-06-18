@@ -14,7 +14,7 @@
                         <div class="dash-widget-header">
                             <div class="dash-title">
                                 <h6> 
-                                    <a style="color: white;" class="@if($activeLink =='leavesPolicy') active @endif edit-button" href="{{route('backend.settings.leavesPolicy')}}">{{__trans('leaves_policy')}}</a>
+                                    <a class="@if($activeLink =='leavesPolicy') active @endif edit-button" href="{{route('backend.settings.leavesPolicy')}}">{{__trans('leaves_policy')}}</a>
                                 </h6>
                             </div>
                         </div>
@@ -28,7 +28,7 @@
                     <div class="card-body">
                         <div class="dash-widget-header">
                             <div class="dash-title">
-                                <h6> <a style="color: white;"
+                                <h6> <a
                                         class="@if($activeLink =='attendance_policy') active @endif edit-button"
                                         href="{{route('backend.settings.attendance_policy')}}">{{__trans('attendance_policy')}}</a>
                                 </h6>
@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <div class="dash-widget-header">
                             <div class="dash-title">
-                                <h6> <a style="color: white;"
+                                <h6> <a
                                         class="@if($activeLink =='late_comers_policy') active @endif edit-button"
                                         href="{{route('backend.settings.late_comers_policy')}}">{{__trans('late_comers_policy')}}</a>
                                 </h6>
@@ -64,7 +64,7 @@
                     <div class="card-body">
                         <div class="dash-widget-header">
                             <div class="dash-title">
-                                <h6> <a style="color: white;"
+                                <h6> <a
                                         class="@if($activeLink =='early_comers_policy') active @endif edit-button"
                                         href="{{route('backend.settings.early_comers_policy')}}">{{__trans('early_comers_policy')}}</a>
                                 </h6>
@@ -83,7 +83,7 @@
                     <div class="card-body">
                         <div class="dash-widget-header">
                             <div class="dash-title">
-                                <h6> <a style="color: white;"
+                                <h6> <a
                                         class="@if($activeLink =='overtime_policy') active @endif edit-button"
                                         href="{{route('backend.settings.overtime_policy')}}">{{__trans('overtime_policy')}}</a>
                                 </h6>
@@ -101,7 +101,7 @@
                         <div class="dash-widget-header">
                             <div class="dash-title">
                                 <h6> 
-                                    <a style="color: white;" class="@if($activeLink =='overtime_policy') active @endif" href="{{route('backend.settings.endOfServicePolicy')}}">{{__trans('end_of_service_policy')}}</a>
+                                    <a class="@if($activeLink =='overtime_policy') active @endif" href="{{route('backend.settings.endOfServicePolicy')}}">{{__trans('end_of_service_policy')}}</a>
                                 </h6>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                         <div class="dash-widget-header">
                             <div class="dash-title">
                                 <h6> 
-                                    <a style="color: white;" class="@if($activeLink =='shift_policy') active @endif edit-button" href="{{route('backend.settings.shiftPolicy')}}">{{__trans('Shift_policy')}}</a>
+                                    <a class="@if($activeLink =='shift_policy') active @endif edit-button" href="{{route('backend.settings.shiftPolicy')}}">{{__trans('Shift_policy')}}</a>
                                 </h6>
                             </div>
                         </div>
@@ -128,7 +128,7 @@
                         <div class="dash-widget-header">
                             <div class="dash-title">
                                 <h6> 
-                                    <a style="color: white;" class="@if($activeLink =='payrollPolicy') active @endif edit-button" href="{{route('backend.settings.payrollPolicy')}}">{{__trans('payroll_policy')}}</a>
+                                    <a class="@if($activeLink =='payrollPolicy') active @endif edit-button" href="{{route('backend.settings.payrollPolicy')}}">{{__trans('payroll_policy')}}</a>
                                 </h6>
                             </div>
                         </div>

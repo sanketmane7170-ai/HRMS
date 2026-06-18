@@ -239,6 +239,7 @@ p, span, b, strong, td, th {
 
 .card-header {
     background: transparent !important;
+    color: var(--text-primary) !important;
     border-bottom: 1px solid var(--border) !important;
     padding: 1.25rem 1.5rem !important;
 }
@@ -372,6 +373,7 @@ p, span, b, strong, td, th {
 
 .card-header {
     background: transparent !important;
+    color: var(--text-primary) !important;
     border: 0 !important;
     border-bottom: 1px solid var(--border) !important;
     padding: 20px 28px !important;
