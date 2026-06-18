@@ -52,6 +52,7 @@ class User extends Authenticatable
     const ROLE_HR           = 'hr';
     const ROLE_LM           = 'linemanager';
     const ROLE_DEPT_MANAGER = 'departmentmanager';
+    const ROLE_PAYROLL_MANAGER = 'payrollmanager';
     const STATUS_ACTIVE     = 'active';
     const STATUS_INACTIVE   = 'in-active';
     const STATUS_BANNED     = 'banned';

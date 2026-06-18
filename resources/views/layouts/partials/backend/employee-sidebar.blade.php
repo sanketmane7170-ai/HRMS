@@ -1,4 +1,4 @@
-@if(!auth()->user()->hasRole(\App\Models\User::ROLE_ADMIN) && !auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) && !auth()->user()->hasRole(\App\Models\User::ROLE_HR))
+@if(!auth()->user()->hasRole(\App\Models\User::ROLE_ADMIN) && !auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) && !auth()->user()->hasRole(\App\Models\User::ROLE_HR) && !auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER))
 <li class="submenu">
     <a href="#">
     <a href="#">

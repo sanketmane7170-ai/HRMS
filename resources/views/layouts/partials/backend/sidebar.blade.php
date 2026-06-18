@@ -33,10 +33,12 @@
                     </a>
                 </li>
 
+                @unless(auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER))
                 <li class="{{ $activeLink == 'features' ? 'active':''}}">
                     <a href="{{route('backend.features.index')}}"><i class="fas fa-bullhorn"></i>
                         <span>{{__trans('features')}}</span></a>
                 </li>
+                @endunless
                 @include('layouts.partials.backend.employee-sidebar')
                 @can('Manage User')
                 <li class="submenu">
