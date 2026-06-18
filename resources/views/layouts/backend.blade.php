@@ -33,8 +33,8 @@
         <!-- Main Dashboard Footer -->
         <footer class="main-footer" style="text-align: center; padding: 15px; font-size: 14px; background: var(--card, #fff); border-top: 1px solid var(--border, #eaeaea); color: var(--text-secondary, #666); margin-top: 2rem;">
             <p style="margin: 0;">
-                &copy; 2026 WorkPilot. 
-                <strong>Developed By Sanket</strong> (<a href="mailto:contactsanket1@gmail.com" style="color: var(--theme-primary, #007bff); text-decoration: none;">contactsanket1@gmail.com</a>) | 
+                &copy; 2026 SR Global.
+                <strong>Developed By Innozia</strong> |
                 Version: 2.5.0
             </p>
         </footer>

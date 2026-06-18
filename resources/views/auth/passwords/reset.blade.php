@@ -14,7 +14,7 @@
             <p>Almost there! Choose a strong password to ensure your account remains secure and your data protected.</p>
         </div>
         <div class="auth-footer-text d-none d-lg-block">
-            <p>© 2026 WorkPilot. Developed By Sanket (<a href="mailto:contactsanket1@gmail.com" style="color: inherit; text-decoration: underline;">contactsanket1@gmail.com</a>) | Version: 2.5.0</p>
+            <p>© 2026 SR Global. Developed By Innozia | Version: 2.5.0</p>
         </div>
     </div>
 

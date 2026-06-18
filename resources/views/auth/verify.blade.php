@@ -56,7 +56,7 @@
             <div class="container-fluid">
                 <div class="row justify-content-center">
                     <div class="col-12">
-                        © 2026 WorkPilot. Developed By Sanket (<a href="mailto:contactsanket1@gmail.com" style="color: #007bff; text-decoration: none;">contactsanket1@gmail.com</a>) | Version: 2.5.0
+                        © 2026 SR Global. Developed By Innozia | Version: 2.5.0
                     </div>
                 </div>
             </div>

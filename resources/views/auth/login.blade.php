@@ -45,8 +45,7 @@
         </div>
 
         <div class="auth-footer-text d-none d-lg-block">
-            © 2026 WorkPilot. Developed by Sanket
-            (<a href="mailto:contactsanket1@gmail.com">contactsanket1@gmail.com</a>) | Version 2.5.0
+            © 2026 SR Global. Developed by Innozia | Version 2.5.0
         </div>
     </div>
 
