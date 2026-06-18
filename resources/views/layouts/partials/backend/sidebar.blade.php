@@ -18,13 +18,14 @@
                         <span>{{__trans('dashboard')}}</span></a>
                 </li>
 
+                @unless(auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER))
                 <li class="{{ ($activeLink ?? '') == 'live-board' ? 'active' : '' }}">
                     <a href="{{ route('backend.work-status.live-board') }}">
                         <i class="fas fa-satellite-dish pulse-icon"></i>
                         <span>Live Presence Board</span>
                     </a>
                 </li>
-                
+
                 {{-- Sanket v2.0 - AgenticAI sidebar link integrated from Gastronaut branch --}}
                 <li class="{{ $activeLink == 'agentic-ai' ? 'active':''}}">
                     <a href="/agenticai">
@@ -32,6 +33,7 @@
                         <span>WorkPilot AI</span>
                     </a>
                 </li>
+                @endunless
 
                 @unless(auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER))
                 <li class="{{ $activeLink == 'features' ? 'active':''}}">
