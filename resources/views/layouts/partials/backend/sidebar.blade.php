@@ -233,10 +233,12 @@
                     </ul>
                 </li>
                 @endif
+                @unless(auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER))
                 <li class="{{ $activeLink == 'reports' ? 'active':''}}">
                     <a href="{{route('backend.reports')}}"><i class="fas fa-list"></i>
                         <span>{{__trans('reports')}}</span></a>
                 </li>
+                @endunless
 
 
             </ul>

@@ -514,7 +514,7 @@
 {{-- Onboarding Module Routes Ends --}}
 
 {{-- Resignation Module Routes Starts --}}
-@if (isModuleEnabled('Resignation') && (!auth()->user()->hasRole(['admin', 'Admin', 'Super Admin', 'superadmin']) || auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->can('Manage Resignation')))
+@if (isModuleEnabled('Resignation') && !auth()->user()->hasRole(\App\Models\User::ROLE_PAYROLL_MANAGER) && (!auth()->user()->hasRole(['admin', 'Admin', 'Super Admin', 'superadmin']) || auth()->user()->hasRole(\App\Models\User::ROLE_SUPER_ADMIN) || auth()->user()->can('Manage Resignation')))
 <li class="submenu {{ str_starts_with($activeLink, 'resignation.') ? 'active' : '' }}">
     <a href="#" class="{{ str_starts_with($activeLink, 'resignation.') ? 'active' : '' }}">
         <i class="fas fa-sign-out-alt"></i>
