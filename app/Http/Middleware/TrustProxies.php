@@ -10,9 +10,14 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
+     * The app always sits behind a reverse proxy (local Docker nginx, and in
+     * production an additional shared host-level nginx terminating TLS), so the
+     * connecting IP is never the real client IP — trust all proxies and rely on
+     * X-Forwarded-* headers for scheme/IP detection.
+     *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.
